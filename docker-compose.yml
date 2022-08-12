@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  mssqldb:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=SonarQube-TestCoverage@!
+    ports:
+        - "1440:1433"
+  sonarqube:
+    image: sonarqube
+    depends_on:
+      - mssqldb
+    environment:
+      sonar__jdbc__url: jdbc:sqlserver://mssqldb/sonar
+      sonar__jdbc__username: sa
+      sonar__jdbc__password: SonarQube-TestCoverage@!
+    ports:
+    - "9001:9000"
+    - "9092:9092"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
